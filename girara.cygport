@@ -1,0 +1,33 @@
+NAME="girara"
+VERSION=0.1.6
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="GTK+-based minimalistic user interface library"
+DESCRIPTION="girara is a library that implements a user interface that focuses
+on simplicity and minimalism.  girara was designed to replace and enhance the
+user interface that is used by zathura and jumanji and other features that
+those applications share."
+HOMEPAGE="http://pwmt.org/projects/girara/"
+SRC_URI="http://pwmt.org/projects/girara/download/${NAME}-${VERSION}.tar.gz"
+PATCH_URI="0.1.6-cygwin.patch"
+
+PKG_NAMES="libgirara-common libgirara-gtk2_1 libgirara-gtk2-devel"
+libgirara_common_CONTENTS="usr/share/doc/"
+libgirara_gtk2_1_REQUIRES="libgirara-common"
+libgirara_gtk2_1_CONTENTS="usr/bin/cyggirara-gtk2-1.dll usr/share/locale/*/*/libgirara-gtk2-1.mo"
+libgirara_gtk2_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
+
+src_compile() {
+	lndirs
+	cd ${B}
+	cygmake \
+		CC=${CC} CFLAGS="${CFLAGS} -std=c99 \$(INCS)" \
+		LDFLAGS="${LDFLAGS}" \
+		GIRARA_GTK_VERSION=2
+}
+
+src_install() {
+	cd ${B}
+	cygmake install-shared install-headers DESTDIR=${D} GIRARA_GTK_VERSION=2
+	cyginstall -C po GIRARA_GTK_VERSION=2
+}
