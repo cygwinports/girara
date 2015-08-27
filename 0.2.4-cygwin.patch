@@ -1,0 +1,36 @@
+--- origsrc/girara-0.2.4/Makefile	2015-04-13 15:49:26.000000000 -0500
++++ src/girara-0.2.4/Makefile	2015-08-27 16:16:35.318521000 -0500
+@@ -117,10 +117,16 @@ ${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJE
+ 	$(QUIET)${CC} -Wl,${SONAME_FLAG},lib${PROJECT}.so.${SOMAJOR} \
+ 		${SHARED_FLAG} ${LDFLAGS} -o $@ ${OBJECTS} ${LIBS}
+ 
++${BUILDDIR_RELEASE}/${BINDIR}/cyg${PROJECT}-${SOMAJOR}.dll: ${OBJECTS}
++	$(call colorecho,LD,$@)
++	@mkdir -p ${BUILDDIR_RELEASE}/${BINDIR}
++	$(QUIET)${CC} -Wl,--out-implib,${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJECT}.dll.a \
++		${SHARED_FLAG} ${LDFLAGS} -o $@ ${OBJECTS} ${LIBS}
++
+ ${PROJECT}: static shared
+ ${PROJECTNV}: ${PROJECT}
+ static: ${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJECT}.a
+-shared: ${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJECT}.so.${SOVERSION}
++shared: ${BUILDDIR_RELEASE}/${BINDIR}/cyg${PROJECT}-${SOMAJOR}.dll
+ release: ${PROJECT}
+ 
+ # debug build
+@@ -244,12 +250,10 @@ install-static: static
+ 
+ install-shared: shared
+ 	$(call colorecho,INSTALL,"Install shared library")
++	$(QUIET)mkdir -m 755 -p ${DESTDIR}${PREFIX}/bin
+ 	$(QUIET)mkdir -m 755 -p ${DESTDIR}${LIBDIR}
+-	$(QUIET)install -m 644 ${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJECT}.so.${SOVERSION} ${DESTDIR}${LIBDIR}
+-	$(QUIET)ln -sf lib${PROJECT}.so.${SOVERSION} ${DESTDIR}${LIBDIR}/lib${PROJECT}.so.${SOMAJOR} || \
+-		echo "Failed to create lib${PROJECT}.so.${SOMAJOR}. Please check if it exists and points to the correct version of lib${PROJECT}.so."
+-	$(QUIET)ln -sf lib${PROJECT}.so.${SOVERSION} ${DESTDIR}${LIBDIR}/lib${PROJECT}.so || \
+-		echo "Failed to create lib${PROJECT}.so. Please check if it exists and points to the correct version of lib${PROJECT}.so."
++	$(QUIET)install -m 644 ${BUILDDIR_RELEASE}/${BINDIR}/cyg${PROJECT}-${SOMAJOR}.dll ${DESTDIR}${PREFIX}/bin
++	$(QUIET)install -m 644 ${BUILDDIR_RELEASE}/${BINDIR}/lib${PROJECT}.dll.a ${DESTDIR}${LIBDIR}
+ 
+ install-headers: ${PROJECTNV}/version.h ${BUILDDIR}/${PROJECT}.pc
+ 	$(call colorecho,INSTALL,"Install pkg-config file")

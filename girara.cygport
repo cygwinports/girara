@@ -1,5 +1,5 @@
 NAME="girara"
-VERSION=0.2.0
+VERSION=0.2.4
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="GTK+-based minimalistic user interface library"
@@ -9,13 +9,12 @@ user interface that is used by zathura and jumanji and other features that
 those applications share."
 HOMEPAGE="http://pwmt.org/projects/girara/"
 SRC_URI="http://pwmt.org/projects/girara/download/${NAME}-${VERSION}.tar.gz"
-PATCH_URI="0.1.6-cygwin.patch"
+PATCH_URI="0.2.4-cygwin.patch"
 
-PKG_NAMES="libgirara-common libgirara-gtk3_1 libgirara-devel"
+PKG_NAMES="libgirara-common libgirara-gtk3_2 libgirara-devel"
 libgirara_common_CONTENTS="usr/share/doc/"
-libgirara_gtk3_1_REQUIRES="libgirara-common"
-libgirara_gtk3_1_CONTENTS="usr/bin/cyggirara-gtk3-1.dll usr/share/locale/*/*/libgirara-gtk3-1.mo"
-libgirara_devel_OBSOLETES="libgirara-gtk2-devel"
+libgirara_gtk3_2_REQUIRES="libgirara-common"
+libgirara_gtk3_2_CONTENTS="usr/bin/cyggirara-gtk3-2.dll usr/share/locale/*/*/libgirara-gtk3-2.mo"
 libgirara_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
 
 src_compile() {
@@ -23,12 +22,11 @@ src_compile() {
 	cd ${B}
 	cygmake \
 		CC=${CC} CFLAGS="${CFLAGS} -std=c99 \$(INCS)" \
-		LDFLAGS="${LDFLAGS}" \
-		GIRARA_GTK_VERSION=2
+		LDFLAGS="${LDFLAGS}"
 }
 
 src_install() {
 	cd ${B}
-	cygmake install-shared install-headers DESTDIR=${D} GIRARA_GTK_VERSION=2
-	cyginstall -C po GIRARA_GTK_VERSION=2
+	cygmake install-shared install-headers DESTDIR=${D}
+	cyginstall -C po
 }
